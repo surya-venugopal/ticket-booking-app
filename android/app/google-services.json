@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "306385956502",
+    "project_id": "ticket-booking-ed971",
+    "storage_bucket": "ticket-booking-ed971.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:306385956502:android:102b1b568ca5a14c239cb7",
+        "android_client_info": {
+          "package_name": "com.example.ticketbookingflutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "306385956502-imlvnatb9mada0jmq7jrbvu61s1mboe9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ticketbookingflutter",
+            "certificate_hash": "f41e3ad56808ec563902c5fede219a5be76d6418"
+          }
+        },
+        {
+          "client_id": "306385956502-7qh1llv9an70v2osd4cfmrbu8vl2vskm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH0C_NdAOqG-PWGRNnEkeL89pcpM5bD_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "306385956502-7qh1llv9an70v2osd4cfmrbu8vl2vskm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
