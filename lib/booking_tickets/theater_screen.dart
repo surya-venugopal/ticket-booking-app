@@ -2,12 +2,15 @@ import 'dart:math';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:ticketbookingflutter/booking_tickets/choose_seat_screen.dart';
 import 'package:ticketbookingflutter/booking_tickets/consts/const.dart';
 import 'package:ticketbookingflutter/booking_tickets/models/dateModel.dart';
-
+import 'package:ticketbookingflutter/booking_tickets/seat_selection_controller.dart';
+import 'choose_seat_screen.dart';
 import 'models/ticketModel.dart';
+import 'no_of_seats.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class TheaterScreen extends StatefulWidget {
   static const routeName = "/theater-screen";
@@ -23,6 +26,12 @@ class _TheaterScreenState extends State<TheaterScreen> {
   Map<String, Map<String, Color>> theaters = {};
 
   var isInit = true;
+
+  @override
+  void initState() {
+    Get.put(SeatSelectionController());
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() async {
@@ -56,7 +65,9 @@ class _TheaterScreenState extends State<TheaterScreen> {
         if (!ignoreKeys.contains(data.key.toString())) {
           theaters[data.key.toString()] = {};
           for (var time in data.children) {
-            theaters[data.key.toString()]![time.key.toString().substring(0,2)+":"+time.key.toString().substring(2)] =
+            theaters[data.key.toString()]![time.key.toString().substring(0, 2) +
+                    ":" +
+                    time.key.toString().substring(2)] =
                 colorMap[time.value.toString()] as Color;
           }
         }
@@ -71,7 +82,6 @@ class _TheaterScreenState extends State<TheaterScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SafeArea(
         child: isInit
@@ -175,7 +185,7 @@ class NeuTheater extends StatelessWidget {
                       if (TicketModel.date.isBefore(DateTime.now())) {
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text("Please select a date")));
+                                content: Text("Please select a valid date")));
                       } else {
                         TicketModel.theaterName = theaterName;
                         TicketModel.time = times.keys.elementAt(index);
@@ -188,93 +198,82 @@ class NeuTheater extends StatelessWidget {
                             ),
                             context: context,
                             builder: (ctx1) {
-                              var noOfTicketsRow1 = [1, 2, 3, 4, 5];
-                              var noOfTicketsRow2 = [6, 7, 8, 9, 10];
-                              return Container(
-                                height: 300,
-                                padding: const EdgeInsets.all(20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      TicketModel.theaterName,
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      TicketModel.time,
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 20),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Text(
-                                      "Tickets",
+                              return Column(
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 15),
+                                    child: Text(
+                                      "How Many Seats?",
                                       style: TextStyle(
-                                          color:
-                                              Theme.of(context).primaryColor),
+                                          fontSize: 16, color: Colors.white),
                                     ),
-                                    const SizedBox(height: 20),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
+                                  ),
+                                  Obx(
+                                    () => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 50, vertical: 20),
+                                      child: SvgPicture.asset(
+                                        "assets/icons/${SeatSelectionController.instance.getAsset()}",
+                                        height: 100,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ),
+                                  NoOfSeats(
+                                      onTap: SeatSelectionController
+                                          .instance.noOfSeats),
+                                  Container(
+                                    padding: const EdgeInsets.all(20),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        ...noOfTicketsRow1.map((noOfTickets) {
-                                          return GestureDetector(
-                                            onTap: () {
-                                              TicketModel.tickets = noOfTickets;
-                                              Navigator.pushNamed(
-                                                context,
-                                                ChooseSeatScreen.routeName,
-                                              );
-                                            },
-                                            child: CircleAvatar(
-                                              radius: 25,
-                                              backgroundColor: Theme.of(context)
-                                                  .primaryColor,
-                                              child: Text(
-                                                noOfTickets.toString(),
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 20),
-                                              ),
+                                        Text(
+                                          TicketModel.theaterName,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          DateFormat("MMMMd").format(TicketModel.date) +
+                                              ", " +
+                                              TicketModel.time,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20),
+                                        ),
+                                        SizedBox(height: 50),
+                                        TextButton(
+                                          onPressed: () {
+                                            TicketModel.tickets =
+                                                SeatSelectionController
+                                                    .instance.noOfSeats.value;
+                                            Navigator.pushNamed(
+                                              context,
+                                              ChooseSeatScreen.routeName,
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 30, vertical: 10),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                color: Theme.of(context)
+                                                    .primaryColor),
+                                            child: const Text(
+                                              "Next",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18),
                                             ),
-                                          );
-                                        })
+                                          ),
+                                        )
                                       ],
                                     ),
-                                    const SizedBox(height: 20),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        ...noOfTicketsRow2.map((noOfTickets) {
-                                          return GestureDetector(
-                                            onTap: () {
-                                              TicketModel.tickets = noOfTickets;
-                                              Navigator.pushNamed(
-                                                context,
-                                                ChooseSeatScreen.routeName,
-                                              );
-                                            },
-                                            child: CircleAvatar(
-                                              radius: 25,
-                                              backgroundColor: Theme.of(context)
-                                                  .primaryColor,
-                                              child: Text(
-                                                noOfTickets.toString(),
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 20),
-                                              ),
-                                            ),
-                                          );
-                                        })
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               );
                             });
                       }

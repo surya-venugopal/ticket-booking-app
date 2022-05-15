@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ticketbookingflutter/booking_tickets/models/ticketModel.dart';
+import 'package:ticketbookingflutter/booking_tickets/review_screen.dart';
+import 'package:ticketbookingflutter/booking_tickets/seat_type.dart';
+
+import 'seat_selection_controller.dart';
+import 'package:get/get.dart';
 
 class ChooseSeatScreen extends StatefulWidget {
   const ChooseSeatScreen({Key? key}) : super(key: key);
@@ -12,6 +17,58 @@ class ChooseSeatScreen extends StatefulWidget {
 }
 
 class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
+  noOfSeatSelection() {
+    return Expanded(
+      child: Container(
+        // color: Colors.white,
+        height: double.maxFinite,
+        width: double.maxFinite,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              SeatType(
+                onTap: SeatSelectionController.instance.seatType,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              TextButton(
+                onPressed: () {
+                  TicketModel.ticketType =
+                      SeatSelectionController.instance.seatType.value.toString();
+                  print(TicketModel.ticketType);
+                  if (TicketModel.ticketType == "") {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Please select a type")));
+                  } else {
+                    Navigator.pushNamed(
+                      context,
+                      ReviewScreen.routeName,
+                    );
+                  }
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Theme.of(context).primaryColor),
+                  child: const Text(
+                    "Next",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +117,9 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              DateFormat("MMMMd").format(TicketModel.date)+", "+TicketModel.time,
+                              DateFormat("MMMMd").format(TicketModel.date) +
+                                  ", " +
+                                  TicketModel.time,
                               style: TextStyle(
                                 color: Theme.of(context).primaryColor,
                               ),
@@ -80,11 +139,7 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            Container(
-              color: Colors.white10,
-              width: double.infinity,
-              height: 1,
-            )
+            noOfSeatSelection()
           ],
         ),
       ),

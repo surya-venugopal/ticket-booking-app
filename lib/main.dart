@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ticketbookingflutter/booking_tickets/choose_seat_screen.dart';
+import 'package:ticketbookingflutter/booking_tickets/review_screen.dart';
 import 'package:ticketbookingflutter/booking_tickets/theater_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
       routes: {
         TheaterScreen.routeName: (ctx) => const TheaterScreen(),
         ChooseSeatScreen.routeName: (ctx) => const ChooseSeatScreen(),
+        ReviewScreen.routeName:(ctx) => const ReviewScreen(),
       },
     );
   }
